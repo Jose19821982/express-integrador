@@ -2,6 +2,34 @@ const express = require('express');
 const router = express.Router();
 const tareas = require('./tareas.json'); // Importa el archivo JSON
 
+// Middleware para manejar errores en solicitudes POST y PUT
+
+
+router.use((req, res, next) => {
+  if ((req.method === 'POST' || req.method === 'PUT') && (!req.body || Object.keys(req.body).length === 0)) {
+    res.status(400).json({ message: 'El cuerpo de la solicitud no puede estar vacío' });
+  } else {
+    if (req.method === 'POST') {
+      const nuevaTarea = req.body;
+      if (!nuevaTarea.nombre || !nuevaTarea.descripcion) {
+        res.status(400).json({ message: 'La solicitud POST debe incluir nombre y descripción' });
+      } else {
+        next();
+      }
+    } else if (req.method === 'PUT') {
+      const nuevaData = req.body;
+      if (Object.keys(nuevaData).length === 0) {
+        res.status(400).json({ message: 'La solicitud PUT debe incluir datos válidos para actualizar' });
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  }
+});
+
+
 // Ruta para crear una tarea
 router.post('/crear', (req, res) => {
   const nuevaTarea = req.body;
@@ -36,4 +64,8 @@ router.put('/actualizar/:id', (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
 

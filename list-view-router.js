@@ -2,6 +2,21 @@ const express = require('express');
 const router = express.Router();
 const tareas = require ('./tareas.json');
 
+router.use((req, res, next) => {
+  if (req.method === 'POST') {
+    const nuevaTarea = req.body;
+    if (!nuevaTarea || isNaN(nuevaTarea.id)) {
+      res.status(400).json({ message: 'El campo "id" en la solicitud POST debe ser un número válido' });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+
+
 //Ruta pare poder listar las tareas 
 router.get ('/todas', (req , res) =>{
   res.json(tareas);

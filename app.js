@@ -9,6 +9,15 @@ const listEditRouter = require('./list-edit-router');
 // Middleware para el manejo de JSON en las solicitudes POST y PUT
 app.use(express.json());
 
+app.use((req, res, next) => {
+  const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
+  if (!validMethods.includes(req.method)) {
+    res.status(400).json({ message: 'Método HTTP no válido' });
+  } else {
+    next();
+  }
+});
+
 // Rutas principales
 app.use('/tareas', listViewRouter);
 app.use('/tareas', listEditRouter);
